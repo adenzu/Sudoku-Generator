@@ -1,3 +1,3 @@
 # Sudoku-Generator
 
-Generates sudoku puzzles without back recursive method.
+Generates sudoku puzzles without backward recursion.
