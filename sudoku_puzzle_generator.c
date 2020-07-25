@@ -209,7 +209,7 @@ void update_section_possibilities(int * arr, int width, int height, int *** chec
 	}
 }
 
-void update_check_array(int ** field, int width, int height, int *** arr){
+int update_check_array(int ** field, int width, int height, int *** arr){
 
 	int section, value;
 	int found = 0;
@@ -235,16 +235,41 @@ void update_check_array(int ** field, int width, int height, int *** arr){
 		remove_same_section(square, width, height, arr[section]);
 		remove_other_sections(section, value, square, width, height, arr);
 
+		/*
+		printf("c1\n");
+		print_cube_array(arr, size);
+		printf("\n");
+		print_sudoku_field(width, height, field);
+		printf("\nc2\n");
+*/
+		/*
 		int x = width * (section % width) + square % width;
 		int y = height * (section / width) + square / width;
 
 		field[y][x] = value + 1;
+		*/
+		found += update_check_array(field, width, height, arr);
+	}
 
-		update_check_array(field, width, height, arr);
+	return found;
+}
+
+void print_cube_array(int *** arr, int size){
+
+	int i, j;
+
+	for(i = 0; i < size; i++){
+		for(j = 0; j < size; j++){
+			printf("\t");
+			print_array(arr[i][j], size);
+		}
+		printf("\n");
 	}
 }
 
 void create_sudoku_puzzle(int width, int height){
+
+	int counter;
 
 	int size = width * height;
 
@@ -256,24 +281,32 @@ void create_sudoku_puzzle(int width, int height){
 
 	int * section_possible_value_count = n_times_array(1, size);
 
-	while((section = random_choice_index_without(section_possible_value_count, size, 0)) != -1){
+	while(counter != size * size){
+		
+		counter = 0;
 
-		value  = random_value(check_array[section], size);
-		square = random_choice_index_without(check_array[section][value], size, 0);
+		while((section = random_choice_index_without(section_possible_value_count, size, 0)) != -1){
+			value  = random_value(check_array[section], size);
+			square = random_choice_index_without(check_array[section][value], size, 0);
 
-		x = width * (section % width) + square % width;
-		y = height * (section / width) + square / width;
+			x = width * (section % width) + square % width;
+			y = height * (section / width) + square / width;
 
-		sudoku_field[y][x] = value + 1;
+			sudoku_field[y][x] = value + 1;
 
-		remove_possible_squares(check_array[section][value], size);
-		remove_same_section(square, width, height, check_array[section]);
-		remove_other_sections(section, value, square, width, height, check_array);
+			remove_possible_squares(check_array[section][value], size);
+			remove_same_section(square, width, height, check_array[section]);
+			remove_other_sections(section, value, square, width, height, check_array);
 
-		update_check_array(sudoku_field, width, height, check_array);
+			//print_sudoku_field(width, height, sudoku_field);
+			//print_cube_array(check_array, size);
 
-		update_section_possibilities(section_possible_value_count, width, height, check_array);
-		//print_sudoku_field(width, height, sudoku_field);
+			counter += 1 + update_check_array(sudoku_field, width, height, check_array);
+			//printf("%d\n", counter);
+
+			update_section_possibilities(section_possible_value_count, width, height, check_array);
+		}
 	}
 	print_sudoku_field(width, height, sudoku_field);
+	printf("%d\n", counter);
 }

@@ -17,6 +17,7 @@ void remove_same_section(int square_index, int width, int height, int ** arr);
 void remove_other_sections(int section, int value, int square, int width, int height, int *** arr);
 int sum_array(int * arr, int len);
 int random_value(int ** arr, int len);
+void print_cube_array(int *** arr, int size);
 void create_sudoku_puzzle(int width, int height);
 
 
